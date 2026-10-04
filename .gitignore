@@ -1,0 +1,57 @@
+# Rust / Cargo build output
+/target/
+/src-tauri/target/
+**/*.rs.bk
+
+# Keep Cargo.lock for this application
+# (do not add Cargo.lock here)
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs / temporary files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE / editor files
+.vscode/
+.idea/
+*.code-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python leftovers
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node leftovers
+node_modules/
+.npm/
+
+# Installer artifacts copied outside Cargo target folders
+*.AppImage
+*.deb
+*.rpm
+*.msi
+*.msix
+*.dmg
+*.pkg
+
+# Local exported reports
+codeatlas-report/
+reports/
+
+# Backup files
+*.bak
+*.old

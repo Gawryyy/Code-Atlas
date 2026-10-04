@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>CodeAtlas</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="ambient ambient-c"></div>
+
+  <div id="app" class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="assets/logo/logo.png" alt="CodeAtlas logo"></div>
+        <div>
+          <div class="brand-name">CodeAtlas</div>
+          <div class="brand-version">v0.1.0</div>
+        </div>
+      </div>
+
+      <button id="open-project" class="primary wide">
+        <span>＋</span> Open repository
+      </button>
+
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview">
+          <span class="nav-icon">◫</span><span>Overview</span>
+        </button>
+        <button class="nav-item" data-view="graph">
+          <span class="nav-icon">⌘</span><span>Dependency Graph</span>
+        </button>
+        <button class="nav-item" data-view="files">
+          <span class="nav-icon">≡</span><span>Files</span>
+        </button>
+        <button class="nav-item" data-view="todos">
+          <span class="nav-icon">✓</span><span>TODOs</span>
+        </button>
+        <button class="nav-item" data-view="git">
+          <span class="nav-icon">⑂</span><span>Git</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="mini-card">
+        <div class="mini-label">Current project</div>
+        <div id="sidebar-project" class="mini-value">No repository open</div>
+        <div id="sidebar-path" class="mini-path">Choose a folder to begin.</div>
+      </div>
+
+      <div class="sidebar-footer">Local-first · No account · No cloud</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">REPOSITORY EXPLORER</div>
+          <h1 id="page-title">Overview</h1>
+        </div>
+
+        <div class="top-actions">
+          <div id="scan-pill" class="status-pill idle"><span class="dot"></span><span>Waiting</span></div>
+          <button id="rescan" class="ghost" disabled>↻ Rescan</button>
+          <button id="open-folder" class="ghost" disabled>Open folder</button>
+          <button id="open-vscode" class="ghost" disabled>VS Code</button>
+          <button id="export-report" class="accent" disabled>Export report</button>
+        </div>
+      </header>
+
+      <section id="empty-state" class="empty-state">
+        <div class="empty-orbit">
+          <div class="empty-core"><img src="assets/logo/logo.png" alt="CodeAtlas logo"></div>
+          <span class="orbit-dot dot-1"></span>
+          <span class="orbit-dot dot-2"></span>
+          <span class="orbit-dot dot-3"></span>
+        </div>
+        <div class="eyebrow">UNDERSTAND YOUR CODEBASE</div>
+        <h2>Turn a repository into a map.</h2>
+        <p>Open a project to explore languages, source files, internal imports, TODOs and Git activity without uploading anything.</p>
+        <button id="empty-open" class="primary large">Open a repository</button>
+        <div class="feature-chips">
+          <span>Rust powered</span><span>Local only</span><span>Windows + Linux</span><span>Static report export</span>
+        </div>
+      </section>
+
+      <section id="content" class="content hidden">
+        <div id="view-overview" class="view active-view">
+          <div id="stat-grid" class="stat-grid"></div>
+
+          <div class="overview-grid">
+            <article class="panel language-panel">
+              <div class="panel-heading">
+                <div><div class="eyebrow">LANGUAGES</div><h3>Repository makeup</h3></div>
+                <span id="language-count" class="subtle"></span>
+              </div>
+              <div class="language-layout">
+                <div id="language-donut" class="donut"><div class="donut-center"><b id="donut-value">0</b><span>files</span></div></div>
+                <div id="language-list" class="language-list"></div>
+              </div>
+            </article>
+
+            <article class="panel health-panel">
+              <div class="panel-heading">
+                <div><div class="eyebrow">REPOSITORY</div><h3>Quick signals</h3></div>
+              </div>
+              <div id="health-list" class="health-list"></div>
+            </article>
+          </div>
+
+          <div class="overview-grid lower">
+            <article class="panel">
+              <div class="panel-heading">
+                <div><div class="eyebrow">HOTSPOTS</div><h3>Most connected files</h3></div>
+              </div>
+              <div id="hotspot-list" class="rank-list"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <div><div class="eyebrow">RECENT</div><h3>Git activity</h3></div>
+                <button class="text-button" data-go-view="git">View all</button>
+              </div>
+              <div id="recent-commits" class="commit-list compact"></div>
+            </article>
+          </div>
+        </div>
+
+        <div id="view-graph" class="view">
+          <div class="graph-toolbar panel">
+            <div class="graph-search-wrap">
+              <span>⌕</span>
+              <input id="graph-search" type="search" placeholder="Search file or folder…" />
+            </div>
+            <select id="graph-language" aria-label="Filter graph by language">
+              <option value="all">All languages</option>
+            </select>
+            <div class="toolbar-divider"></div>
+            <span id="graph-summary" class="subtle">0 nodes</span>
+            <button id="graph-fit" class="ghost small">Fit</button>
+          </div>
+          <div class="graph-layout">
+            <div id="graph-stage" class="graph-stage panel">
+              <svg id="graph-svg" viewBox="0 0 1200 720" aria-label="Dependency graph">
+                <g id="graph-viewport">
+                  <g id="graph-edges"></g>
+                  <g id="graph-nodes"></g>
+                </g>
+              </svg>
+              <div class="graph-legend"><span class="legend-line"></span> internal import / include</div>
+              <div id="graph-limit-note" class="graph-limit-note hidden"></div>
+            </div>
+            <aside id="node-inspector" class="panel inspector">
+              <div class="eyebrow">NODE INSPECTOR</div>
+              <h3>Select a file</h3>
+              <p class="subtle">Click a graph node to inspect its path, size, line count and source preview.</p>
+            </aside>
+          </div>
+        </div>
+
+        <div id="view-files" class="view">
+          <div class="files-layout">
+            <section class="panel file-browser">
+              <div class="panel-heading file-heading">
+                <div><div class="eyebrow">SOURCE FILES</div><h3 id="file-heading-count">Files</h3></div>
+                <div class="file-filters">
+                  <input id="file-search" type="search" placeholder="Search paths…" />
+                  <select id="file-language"><option value="all">All languages</option></select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="file-table">
+                  <thead><tr><th>File</th><th>Language</th><th>Lines</th><th>Size</th></tr></thead>
+                  <tbody id="file-table-body"></tbody>
+                </table>
+              </div>
+            </section>
+            <aside class="panel preview-panel">
+              <div class="preview-header">
+                <div><div class="eyebrow">PREVIEW</div><h3 id="preview-name">Select a file</h3></div>
+                <span id="preview-meta" class="subtle"></span>
+              </div>
+              <pre id="code-preview" class="code-preview"><code>// Select a source file to preview it here.</code></pre>
+            </aside>
+          </div>
+        </div>
+
+        <div id="view-todos" class="view">
+          <div class="panel todos-panel">
+            <div class="panel-heading">
+              <div><div class="eyebrow">CODE NOTES</div><h3>TODO / FIXME / HACK</h3></div>
+              <div class="file-filters"><input id="todo-search" type="search" placeholder="Search TODOs…" /></div>
+            </div>
+            <div id="todo-list" class="todo-list"></div>
+          </div>
+        </div>
+
+        <div id="view-git" class="view">
+          <div id="git-banner" class="git-banner panel"></div>
+          <div class="panel">
+            <div class="panel-heading">
+              <div><div class="eyebrow">HISTORY</div><h3>Recent commits</h3></div>
+            </div>
+            <div id="git-commits" class="commit-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="app.js"></script>
+</body>
+</html>
